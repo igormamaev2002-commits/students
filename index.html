@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ведомость учеников</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧑‍🎓</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧑‍🎓</text></svg>" />
     <style>
+        /* ----- корневые переменные (сохранены) ----- */
         :root {
             --paper: #f4ede4;
             --paper-line: #d2c4b0;
@@ -17,7 +18,9 @@
             --cell-hover: #ece0cc;
             --shadow: rgba(60, 40, 20, 0.15);
             --shadow-strong: rgba(40, 25, 10, 0.25);
+            --card-radius: 14px;
         }
+
         * {
             box-sizing: border-box;
         }
@@ -29,29 +32,31 @@
             color: var(--ink);
         }
         .wrap {
-            max-width: 1100px;
+            max-width: 1180px;
             margin: 0 auto;
         }
+
+        /* ----- header ----- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             border-bottom: 3px double var(--accent-deep);
             padding-bottom: 10px;
-            margin-bottom: 26px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
             gap: 12px;
         }
         h1 {
             font-size: 1.9rem;
             margin: 0;
-            letter-spacing: .5px;
+            letter-spacing: 0.5px;
             color: var(--accent-deep);
             font-weight: 700;
         }
         .subtitle {
             font-family: "Courier New", monospace;
-            font-size: .85rem;
+            font-size: 0.85rem;
             color: var(--ink-soft);
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -64,24 +69,24 @@
             border: 1.5px solid var(--paper-line);
             border-radius: 6px;
             text-align: right;
-            width: auto;
             min-width: 120px;
             padding: 4px 8px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
             flex: 0 1 auto;
         }
         .year-input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(138, 109, 59, 0.15), inset 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 0 0 3px rgba(138, 109, 59, 0.15), inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
+        /* ----- sync ----- */
         .sync-status {
             font-family: "Courier New", monospace;
-            font-size: .75rem;
+            font-size: 0.75rem;
             color: var(--ink-soft);
             margin-bottom: 14px;
-            letter-spacing: .3px;
+            letter-spacing: 0.3px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -109,27 +114,33 @@
         .sync-status.error .dot {
             background: #8a3b3b;
         }
-        .sync-status.polling .dot {
-            background: var(--accent);
-            animation: pulse 0.8s infinite;
-        }
         @keyframes pulse {
-            0% { opacity: 0.4; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.4; transform: scale(0.8); }
+            0% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
         }
 
+        /* ----- toolbar ----- */
         .toolbar {
             display: flex;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             align-items: center;
         }
         .toolbar button {
             font-family: "Courier New", monospace;
-            font-size: .8rem;
-            letter-spacing: .5px;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
             background: var(--paper);
             border: 1.5px solid var(--accent-deep);
@@ -137,7 +148,7 @@
             padding: 8px 14px;
             cursor: pointer;
             border-radius: 8px;
-            transition: .15s;
+            transition: 0.15s;
             box-shadow: 0 3px 8px var(--shadow);
         }
         .toolbar button:hover {
@@ -154,12 +165,176 @@
             color: var(--paper);
         }
 
+        /* ============================================================
+                   СТИЛЬНЫЙ КАЛЕНДАРЬ (с прокруткой и переносом)
+                   ============================================================ */
+        .calendar-section {
+            margin-bottom: 28px;
+            background: var(--paper);
+            border: 1.5px solid var(--paper-line);
+            border-radius: var(--card-radius);
+            padding: 20px 20px 18px;
+            box-shadow: 0 6px 28px var(--shadow-strong), inset 0 1px 4px rgba(255, 255, 255, 0.7);
+            transition: box-shadow 0.25s;
+        }
+        .calendar-section:hover {
+            box-shadow: 0 8px 36px var(--shadow-strong);
+        }
+
+        .calendar-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .calendar-head h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-deep);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.3px;
+        }
+        .calendar-head h2 span {
+            font-size: 1.6rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .cal-day {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 10px 6px 12px;
+            border: 1px solid var(--paper-line);
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            min-height: 120px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: thin;
+            scrollbar-color: var(--paper-line) transparent;
+        }
+        .cal-day::-webkit-scrollbar {
+            width: 5px;
+        }
+        .cal-day::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .cal-day::-webkit-scrollbar-thumb {
+            background: var(--paper-line);
+            border-radius: 10px;
+        }
+        .cal-day:hover {
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 16px var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .cal-day-header {
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--accent-deep);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--paper-line);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-family: "Courier New", monospace;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .cal-day-header .short {
+            display: none;
+        }
+
+        .cal-lessons {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 2px;
+        }
+
+        .cal-lesson {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2px 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-deep);
+            background: rgba(138, 109, 59, 0.08);
+            border-radius: 30px;
+            padding: 4px 6px;
+            border: 1px solid rgba(138, 109, 59, 0.12);
+            transition: background 0.2s, transform 0.15s;
+            font-variant-numeric: tabular-nums;
+            font-family: "Courier New", monospace;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .cal-lesson > * {
+            flex-shrink: 1;
+            min-width: 0;
+        }
+        .cal-lesson:hover {
+            background: rgba(138, 109, 59, 0.18);
+            transform: scale(1.04);
+        }
+        .cal-lesson .vdk {
+            font-weight: 400;
+            color: var(--ink-soft);
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+        }
+        .cal-lesson .msk {
+            font-weight: 400;
+            color: var(--ink-soft);
+            font-size: 0.6rem;
+            letter-spacing: 0.3px;
+        }
+        .cal-lesson .student {
+            font-weight: 600;
+            color: var(--accent-deep);
+            font-size: 0.7rem;
+            background: rgba(138, 109, 59, 0.12);
+            padding: 0 6px;
+            border-radius: 12px;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .cal-empty {
+            text-align: center;
+            color: var(--paper-line);
+            font-size: 0.75rem;
+            font-family: "Courier New", monospace;
+            padding: 12px 0;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        /* ----- таблица (оригинал) ----- */
         .table-wrapper {
             border-radius: 12px;
             overflow: hidden;
             border: 1.5px solid var(--paper-line);
             background: var(--paper);
-            box-shadow: 0 6px 24px var(--shadow-strong), inset 0 1px 4px rgba(255,255,255,0.7);
+            box-shadow: 0 6px 24px var(--shadow-strong), inset 0 1px 4px rgba(255, 255, 255, 0.7);
         }
         .table-scroll {
             overflow-x: auto;
@@ -170,28 +345,22 @@
         }
         .table-scroll::-webkit-scrollbar-track {
             background: var(--paper);
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
         }
         .table-scroll::-webkit-scrollbar-thumb {
             background: var(--paper-line);
             border-radius: 12px;
             border: 2px solid var(--paper);
-            box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
             transition: background 0.2s;
         }
         .table-scroll::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
             border-color: var(--accent-deep);
         }
-        .table-scroll::-webkit-scrollbar-thumb:active {
-            background: var(--accent-deep);
-        }
         .table-scroll {
             scrollbar-width: thin;
             scrollbar-color: var(--paper-line) var(--paper);
-        }
-        .table-scroll:hover {
-            scrollbar-color: var(--accent) var(--paper);
         }
 
         table {
@@ -201,23 +370,24 @@
             min-width: 760px;
             background: var(--paper);
         }
-
-        th, td {
+        th,
+        td {
             border-right: 1.5px solid var(--paper-line);
             border-bottom: 1.5px solid var(--paper-line);
             padding: 9px 12px;
             text-align: center;
             vertical-align: middle;
-            font-size: .92rem;
+            font-size: 0.92rem;
             min-width: 150px;
             transition: background 0.2s ease;
             background: var(--paper);
         }
-        th:first-child, td:first-child {
+        th:first-child,
+        td:first-child {
             border-left: 1.5px solid var(--paper-line);
         }
-
-        th.dayhead, td.dayname {
+        th.dayhead,
+        td.dayname {
             min-width: 130px;
             text-align: left;
             font-weight: 700;
@@ -275,7 +445,7 @@
             border: none;
             background: transparent;
             font-family: inherit;
-            font-size: .92rem;
+            font-size: 0.92rem;
             color: var(--ink);
             padding: 2px 0;
             outline: none;
@@ -326,7 +496,7 @@
             border: none;
             background: transparent;
             font-family: inherit;
-            font-size: .92rem;
+            font-size: 0.92rem;
             color: var(--ink);
             padding: 2px 0;
             outline: none;
@@ -344,7 +514,7 @@
             -moz-appearance: textfield;
         }
 
-        /* Drag-and-drop индикатор */
+        /* drag & drop */
         th.dragover {
             background: var(--accent) !important;
             color: var(--paper) !important;
@@ -353,18 +523,17 @@
         th.dragging {
             opacity: 0.4;
         }
-
         thead th {
             position: relative;
             background: var(--accent-deep);
             color: var(--paper);
             font-weight: 700;
-            letter-spacing: .3px;
+            letter-spacing: 0.3px;
             border-bottom: 1.5px solid var(--paper-line);
             padding: 26px 10px 26px 10px;
             vertical-align: middle;
             min-width: 140px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
             cursor: grab;
             user-select: none;
         }
@@ -379,7 +548,7 @@
             font-weight: 700;
             text-align: center;
             width: 100%;
-            font-size: .95rem;
+            font-size: 0.95rem;
             display: inline-block;
             margin-top: 0;
             padding: 0 24px;
@@ -387,7 +556,7 @@
         }
         thead th .stu-name:focus {
             outline: 1px dashed var(--paper);
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
         }
         thead th .remove-col {
             position: absolute;
@@ -419,24 +588,25 @@
             height: 17px;
             cursor: pointer;
             accent-color: #4a7a5a;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 3px;
             transition: transform 0.2s, background 0.2s;
-            border: 1px solid rgba(255,255,255,0.25);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             pointer-events: auto;
         }
         thead th .active-check:hover {
             transform: scale(1.15);
-            background: rgba(255,255,255,0.35);
+            background: rgba(255, 255, 255, 0.35);
         }
         thead th.inactive .stu-name {
             opacity: 0.5;
         }
         thead th.inactive {
             background: #4a3f33;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.15);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15);
         }
 
+        /* ----- summary ----- */
         .summary {
             display: flex;
             gap: 18px;
@@ -451,7 +621,7 @@
             border-left: 5px solid var(--accent-deep);
             padding: 16px 18px;
             border-radius: 12px;
-            box-shadow: 0 5px 20px var(--shadow-strong), inset 0 1px 4px rgba(255,255,255,0.7);
+            box-shadow: 0 5px 20px var(--shadow-strong), inset 0 1px 4px rgba(255, 255, 255, 0.7);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .card:hover {
@@ -460,7 +630,7 @@
         }
         .card .label {
             font-family: "Courier New", monospace;
-            font-size: .72rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--ink-soft);
@@ -494,7 +664,7 @@
             border-bottom-color: var(--accent-deep);
         }
         .card .hint {
-            font-size: .72rem;
+            font-size: 0.72rem;
             color: var(--ink-soft);
             font-weight: 400;
             margin-top: 4px;
@@ -508,7 +678,7 @@
         }
         .card .period-inputs input[type="date"] {
             font-family: inherit;
-            font-size: .9rem;
+            font-size: 0.9rem;
             padding: 4px 6px;
             border: 1.5px solid var(--paper-line);
             border-radius: 6px;
@@ -519,14 +689,14 @@
         }
         .card .period-inputs button {
             font-family: "Courier New", monospace;
-            font-size: .7rem;
+            font-size: 0.7rem;
             padding: 4px 10px;
             border: 1.5px solid var(--accent-deep);
             border-radius: 6px;
             background: var(--paper);
             color: var(--accent-deep);
             cursor: pointer;
-            transition: .15s;
+            transition: 0.15s;
             white-space: nowrap;
         }
         .card .period-inputs button:hover {
@@ -540,11 +710,12 @@
             margin-top: 6px;
         }
         .card .period-detail {
-            font-size: .85rem;
+            font-size: 0.85rem;
             color: var(--ink-soft);
             margin-top: 2px;
         }
 
+        /* ----- время ----- */
         .time-section {
             margin-top: 28px;
             display: flex;
@@ -555,7 +726,7 @@
             border: 1.5px solid var(--paper-line);
             border-radius: 12px;
             padding: 20px 24px;
-            box-shadow: 0 5px 20px var(--shadow-strong), inset 0 1px 4px rgba(255,255,255,0.7);
+            box-shadow: 0 5px 20px var(--shadow-strong), inset 0 1px 4px rgba(255, 255, 255, 0.7);
             align-items: stretch;
         }
         .time-box {
@@ -564,7 +735,7 @@
         }
         .time-box h3 {
             font-family: "Courier New", monospace;
-            font-size: .85rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--ink-soft);
@@ -577,7 +748,7 @@
             color: var(--accent-deep);
             font-variant-numeric: tabular-nums;
             letter-spacing: 1px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
         .converter {
             flex: 2;
@@ -594,7 +765,7 @@
         }
         .converter-row label {
             font-family: "Courier New", monospace;
-            font-size: .8rem;
+            font-size: 0.8rem;
             color: var(--ink-soft);
             min-width: 60px;
         }
@@ -608,22 +779,22 @@
             color: var(--ink);
             width: 120px;
             transition: border-color 0.2s, box-shadow 0.2s;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         .converter-row input[type="time"]:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(138,109,59,0.15), inset 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 0 0 3px rgba(138, 109, 59, 0.15), inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         .converter-hint {
-            font-size: .75rem;
+            font-size: 0.75rem;
             color: var(--ink-soft);
             font-style: italic;
         }
 
         footer.note {
             margin-top: 28px;
-            font-size: .78rem;
+            font-size: 0.78rem;
             color: var(--ink-soft);
             font-family: "Courier New", monospace;
             text-align: center;
@@ -637,7 +808,96 @@
             box-shadow: 0 2px 8px var(--shadow);
         }
 
-        /* --- Мобильная адаптация --- */
+        /* ============================================================
+                   АДАПТИВ
+                   ============================================================ */
+        @media (max-width: 820px) {
+            .calendar-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .cal-day-header .full {
+                display: none;
+            }
+            .cal-day-header .short {
+                display: inline;
+            }
+            .cal-day {
+                min-height: 90px;
+                max-height: 160px;
+                padding: 8px 4px 10px;
+            }
+            .cal-lesson {
+                font-size: 0.65rem;
+                padding: 3px 5px;
+            }
+            .calendar-head h2 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calendar-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+            .cal-day {
+                min-height: 70px;
+                max-height: 140px;
+                padding: 6px 3px 8px;
+            }
+            .cal-day-header {
+                font-size: 0.6rem;
+                padding-bottom: 4px;
+                margin-bottom: 5px;
+            }
+            .cal-lesson {
+                font-size: 0.55rem;
+                padding: 2px 4px;
+                border-radius: 20px;
+                gap: 1px 3px;
+            }
+            .cal-lesson .vdk,
+            .cal-lesson .msk {
+                font-size: 0.5rem;
+            }
+            .cal-lesson .student {
+                font-size: 0.55rem;
+                padding: 0 4px;
+            }
+            .cal-empty {
+                font-size: 0.6rem;
+                padding: 6px 0;
+            }
+            .calendar-head h2 {
+                font-size: 1rem;
+            }
+            .calendar-section {
+                padding: 12px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+            }
+            .cal-day {
+                min-height: 60px;
+                max-height: 120px;
+                padding: 5px 2px 6px;
+            }
+            .cal-day-header {
+                font-size: 0.55rem;
+            }
+            .cal-lesson {
+                font-size: 0.5rem;
+                padding: 2px 3px;
+            }
+            .calendar-head h2 {
+                font-size: 0.9rem;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 16px 10px 60px;
@@ -646,7 +906,6 @@
                 font-size: 1.4rem;
             }
             .year-input {
-                width: auto;
                 min-width: 100px;
                 font-size: 0.9rem;
                 flex: 0 1 auto;
@@ -675,12 +934,14 @@
             .table-wrapper {
                 border-radius: 8px;
             }
-            th, td {
+            th,
+            td {
                 padding: 4px 6px;
                 font-size: 0.75rem;
                 min-width: 100px;
             }
-            th.dayhead, td.dayname {
+            th.dayhead,
+            td.dayname {
                 min-width: 80px;
                 font-size: 0.75rem;
                 padding: 4px 6px;
@@ -782,12 +1043,14 @@
         }
 
         @media (max-width: 480px) {
-            th, td {
+            th,
+            td {
                 padding: 3px 4px;
                 font-size: 0.65rem;
                 min-width: 80px;
             }
-            th.dayhead, td.dayname {
+            th.dayhead,
+            td.dayname {
                 min-width: 60px;
                 font-size: 0.65rem;
                 padding: 3px 4px;
@@ -833,33 +1096,66 @@
         }
 
         @media print {
-            .toolbar, footer.note, .time-section { display: none; }
-            body { background: #fff; }
-            .table-wrapper { box-shadow: none; border: 1px solid #bbb; }
-            th, td { border-color: #bbb !important; }
-            .table-scroll::-webkit-scrollbar { display: none; }
-            .table-scroll { scrollbar-width: none; }
+            .toolbar,
+            footer.note,
+            .time-section,
+            .calendar-section {
+                display: none;
+            }
+            body {
+                background: #fff;
+            }
+            .table-wrapper {
+                box-shadow: none;
+                border: 1px solid #bbb;
+            }
+            th,
+            td {
+                border-color: #bbb !important;
+            }
+            .table-scroll::-webkit-scrollbar {
+                display: none;
+            }
+            .table-scroll {
+                scrollbar-width: none;
+            }
         }
     </style>
 </head>
 <body>
     <div class="wrap">
 
+        <!-- HEADER -->
         <header>
             <div>
                 <h1>Ведомость учеников</h1>
                 <div class="subtitle">расписание и оплата занятий</div>
             </div>
-            <input class="year-input" id="yearLabel" value="На 2026-2027">
+            <input class="year-input" id="yearLabel" value="На 2026-2027" />
         </header>
 
+        <!-- SYNC -->
         <div class="sync-status saved" id="syncStatus"><span class="dot"></span>Готово</div>
 
+        <!-- ============================================================
+        СТИЛЬНЫЙ КАЛЕНДАРЬ (с переносами)
+        ============================================================ -->
+        <div class="calendar-section" id="calendarSection">
+            <div class="calendar-head">
+                <h2><span>📅</span> Расписание занятий</h2>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- заполняется JS -->
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
         <div class="toolbar">
             <button id="addStudent">+ Добавить ученика</button>
             <button id="syncButton" class="sync-btn">⟳ Синхронизировать</button>
         </div>
 
+        <!-- ТАБЛИЦА -->
         <div class="table-wrapper">
             <div class="table-scroll">
                 <table id="mainTable">
@@ -870,6 +1166,7 @@
             </div>
         </div>
 
+        <!-- SUMMARY -->
         <div class="summary">
             <div class="card">
                 <div class="label">Всего занятий в неделю</div>
@@ -890,9 +1187,9 @@
             <div class="card">
                 <div class="label">Сумма за произвольный период</div>
                 <div class="period-inputs">
-                    <input type="date" id="periodStart" value="2026-07-01">
+                    <input type="date" id="periodStart" value="2026-07-01" />
                     <span style="color:var(--ink-soft);">–</span>
-                    <input type="date" id="periodEnd" value="2026-07-31">
+                    <input type="date" id="periodEnd" value="2026-07-31" />
                     <button id="calcPeriod">Рассчитать</button>
                 </div>
                 <div class="period-result" id="periodResult">—</div>
@@ -901,6 +1198,7 @@
             </div>
         </div>
 
+        <!-- ВРЕМЯ -->
         <div class="time-section">
             <div class="time-box">
                 <h3>🕒 Москва (MSK)</h3>
@@ -913,10 +1211,10 @@
             <div class="converter">
                 <div class="converter-row">
                     <label for="mskInput">Москва</label>
-                    <input type="time" id="mskInput" step="60">
+                    <input type="time" id="mskInput" step="60" />
                     <span style="color:var(--ink-soft);">→</span>
                     <label for="vlaInput">Владивосток</label>
-                    <input type="time" id="vlaInput" step="60">
+                    <input type="time" id="vlaInput" step="60" />
                 </div>
                 <div class="converter-hint">Измените время в любом поле — другое пересчитается автоматически (разница +7 ч).</div>
             </div>
@@ -926,9 +1224,16 @@
     </div>
 
     <script>
-        // --- Основной код ведомости ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyAidEwr03Wib6WweGZrN-MZZ3_HgxLvLy2RW3iiRoTJzpPOpcR4I0m8m-A2rnGZedA/exec";
+        // ================================================================
+        //  КОНФИГУРАЦИЯ
+        // ================================================================
+        const SCRIPT_URL =
+            "https://script.google.com/macros/s/AKfycbyAidEwr03Wib6WweGZrN-MZZ3_HgxLvLy2RW3iiRoTJzpPOpcR4I0m8m-A2rnGZedA/exec";
 
+        const DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+        const DAYS_SHORT = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+
+        let students = [];
         let saveTimer = null;
         const SAVE_DEBOUNCE_MS = 900;
         const POLL_INTERVAL_MS = 5000;
@@ -936,14 +1241,14 @@
         let lastSentJson = null;
         let isPolling = false;
 
-        const DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
-        let students = [];
-
         const headRow = document.getElementById('headRow');
         const dayBody = document.getElementById('dayBody');
         const footBody = document.getElementById('footBody');
         const syncStatus = document.getElementById('syncStatus');
 
+        // ================================================================
+        //  ВСПОМОГАТЕЛЬНЫЕ
+        // ================================================================
         function fmt(n) {
             return new Intl.NumberFormat('ru-RU').format(Math.round(n)) + " ₽";
         }
@@ -957,6 +1262,96 @@
             return SCRIPT_URL && SCRIPT_URL.indexOf('/exec') !== -1 && SCRIPT_URL.indexOf('ВСТАВЬТЕ') === -1;
         }
 
+        // Извлекаем все времена из строки (любой текст)
+        function parseTimes(str) {
+            if (!str || !str.trim()) return [];
+            const results = [];
+            const regex = /(\d{1,2}):(\d{2})/g;
+            let match;
+            while ((match = regex.exec(str)) !== null) {
+                results.push({ hour: parseInt(match[1]), minute: parseInt(match[2]) });
+            }
+            return results;
+        }
+
+        // прибавить/вычесть часы
+        function addHours(t, h) {
+            let total = t.hour * 60 + t.minute + h * 60;
+            total = ((total % 1440) + 1440) % 1440;
+            return { hour: Math.floor(total / 60), minute: Math.round(total % 60) };
+        }
+
+        function timeToStr(t) {
+            return String(t.hour).padStart(2, '0') + ':' + String(t.minute).padStart(2, '0');
+        }
+
+        // ================================================================
+        //  РЕНДЕР КАЛЕНДАРЯ (с именами и двумя временами, сортировка по МСК)
+        // ================================================================
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const activeStudents = students.filter(s => s.active !== false);
+
+            // собираем занятия по дням: каждый элемент { timeVlat, timeMsk, name }
+            const dayLessons = DAYS.map(() => []);
+
+            for (const s of activeStudents) {
+                if (!s.times) continue;
+                for (let d = 0; d < 7; d++) {
+                    const cell = s.times[d] || '';
+                    const parsed = parseTimes(cell);
+                    for (const t of parsed) {
+                        // время ВДК (+7)
+                        const vlat = addHours(t, 7);
+                        // время МСК (исходное)
+                        const msk = t;
+                        dayLessons[d].push({
+                            timeVlat: vlat,
+                            timeMsk: msk,
+                            name: s.name || 'Ученик'
+                        });
+                    }
+                }
+            }
+
+            // сортируем по МСК (по возрастанию)
+            for (let d = 0; d < 7; d++) {
+                dayLessons[d].sort((a, b) =>
+                    (a.timeMsk.hour * 60 + a.timeMsk.minute) -
+                    (b.timeMsk.hour * 60 + b.timeMsk.minute)
+                );
+            }
+
+            // строим HTML
+            let html = '';
+            for (let d = 0; d < 7; d++) {
+                const dayName = DAYS[d];
+                const short = DAYS_SHORT[d];
+                const lessons = dayLessons[d];
+                html += `<div class="cal-day">`;
+                html += `<div class="cal-day-header"><span class="full">${dayName}</span><span class="short">${short}</span></div>`;
+                html += `<div class="cal-lessons">`;
+                if (lessons.length === 0) {
+                    html += `<div class="cal-empty">—</div>`;
+                } else {
+                    for (const item of lessons) {
+                        const vlatStr = timeToStr(item.timeVlat);
+                        const mskStr = timeToStr(item.timeMsk);
+                        html += `<div class="cal-lesson">
+                                    ${vlatStr} <span class="vdk">ВДК</span>
+                                    <span class="msk">(${mskStr} МСК)</span>
+                                    <span class="student">${item.name}</span>
+                                </div>`;
+                    }
+                }
+                html += `</div></div>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        // ================================================================
+        //  ЗАГРУЗКА / СОХРАНЕНИЕ
+        // ================================================================
         async function loadFromSheet() {
             if (!isConfigured()) {
                 setSyncStatus('error', 'Синхронизация не настроена (укажите SCRIPT_URL)');
@@ -969,7 +1364,10 @@
                 const data = await res.json();
                 if (Array.isArray(data.students)) {
                     students = data.students;
-                    students.forEach(s => { if (s.active === undefined) s.active = true; });
+                    students.forEach(s => {
+                        if (!s.times) s.times = ["", "", "", "", "", "", ""];
+                        if (s.active === undefined) s.active = true;
+                    });
                 } else {
                     students = [];
                 }
@@ -1043,7 +1441,10 @@
 
                 if (Array.isArray(data.students)) {
                     students = data.students;
-                    students.forEach(s => { if (s.active === undefined) s.active = true; });
+                    students.forEach(s => {
+                        if (!s.times) s.times = ["", "", "", "", "", "", ""];
+                        if (s.active === undefined) s.active = true;
+                    });
                 }
                 if (data.yearLabel) document.getElementById('yearLabel').value = data.yearLabel;
                 if (data.weeksCount) document.getElementById('weeksCount').value = data.weeksCount;
@@ -1057,8 +1458,11 @@
             }
         }
 
-        // --- Drag-and-Drop ---
+        // ================================================================
+        //  DRAG & DROP
+        // ================================================================
         let dragIndex = null;
+
         function initDragDrop() {
             const headers = headRow.querySelectorAll('th:not(.dayhead)');
             headers.forEach(th => {
@@ -1095,7 +1499,9 @@
             });
         }
 
-        // --- Расчёт за период (по фактическому расписанию, учитывая несколько занятий в день) ---
+        // ================================================================
+        //  РАСЧЁТ ПЕРИОДА
+        // ================================================================
         function calcPeriod() {
             const startDate = new Date(document.getElementById('periodStart').value);
             const endDate = new Date(document.getElementById('periodEnd').value);
@@ -1108,19 +1514,10 @@
             let totalLessons = 0;
             const activeStudents = students.filter(s => s.active !== false);
 
-            // Функция для подсчёта количества занятий в ячейке
             function countLessonsInCell(cellText) {
                 if (!cellText || !cellText.trim()) return 0;
-                // Разбиваем по разделителям: запятая, точка с запятой, или несколько пробелов с временными метками
-                const parts = cellText.split(/[,;]\s*/);
-                let count = 0;
-                for (const part of parts) {
-                    // Проверяем, есть ли в части время (например, "13:00", "14:00-15:00")
-                    if (/\d{1,2}:\d{2}/.test(part)) {
-                        count++;
-                    }
-                }
-                return count;
+                const parsed = parseTimes(cellText);
+                return parsed.length;
             }
 
             const currentDate = new Date(startDate);
@@ -1129,65 +1526,74 @@
                 let dayIndex = dayOfWeek - 1;
                 if (dayIndex === -1) dayIndex = 6;
 
-                activeStudents.forEach(s => {
-                    if (!s.times || !s.times[dayIndex]) return;
+                for (const s of activeStudents) {
+                    if (!s.times || !s.times[dayIndex]) continue;
                     const cellText = s.times[dayIndex].trim();
-                    const lessonsCount = countLessonsInCell(cellText);
-                    if (lessonsCount > 0) {
-                        totalLessons += lessonsCount;
-                        totalSum += (s.price || 0) * lessonsCount;
+                    const cnt = countLessonsInCell(cellText);
+                    if (cnt > 0) {
+                        totalLessons += cnt;
+                        totalSum += (s.price || 0) * cnt;
                     }
-                });
-
+                }
                 currentDate.setDate(currentDate.getDate() + 1);
             }
 
             document.getElementById('periodResult').textContent = fmt(totalSum);
-            document.getElementById('periodDetail').textContent = `Всего занятий: ${totalLessons}`;
+            document.getElementById('periodDetail').textContent = 'Всего занятий: ' + totalLessons;
         }
 
-        // --- Функция для создания HTML числового контрола ---
+        // ================================================================
+        //  numberControlHtml
+        // ================================================================
         function numberControlHtml(field, i, value) {
             return `<div class="number-control">
-                <button class="btn-down" data-field="${field}" data-i="${i}" type="button">−</button>
-                <input class="num-input" type="number" min="0" step="1" data-field="${field}" data-i="${i}" value="${value}">
-                <button class="btn-up" data-field="${field}" data-i="${i}" type="button">+</button>
-            </div>`;
+                        <button class="btn-down" data-field="${field}" data-i="${i}" type="button">−</button>
+                        <input class="num-input" type="number" min="0" step="1" data-field="${field}" data-i="${i}" value="${value}">
+                        <button class="btn-up" data-field="${field}" data-i="${i}" type="button">+</button>
+                    </div>`;
         }
 
+        // ================================================================
+        //  РЕНДЕР ВСЕЙ СТРАНИЦЫ
+        // ================================================================
         function render() {
+            // --- заголовок таблицы ---
             headRow.innerHTML = '<th class="dayhead">День недели</th>';
             students.forEach((s, i) => {
                 const th = document.createElement('th');
                 th.dataset.i = i;
                 const checked = s.active !== false ? 'checked' : '';
                 th.innerHTML = `
-                    <button class="remove-col" data-i="${i}" title="Удалить ученика">❌</button>
-                    <input type="checkbox" class="active-check" data-i="${i}" ${checked}>
-                    <div class="stu-name" contenteditable="true" spellcheck="false" data-field="name" data-i="${i}">${s.name || 'Новый ученик'}</div>
-                `;
+                            <button class="remove-col" data-i="${i}" title="Удалить ученика">❌</button>
+                            <input type="checkbox" class="active-check" data-i="${i}" ${checked}>
+                            <div class="stu-name" contenteditable="true" spellcheck="false" data-field="name" data-i="${i}">${s.name || 'Новый ученик'}</div>
+                        `;
                 if (!s.active) th.classList.add('inactive');
                 headRow.appendChild(th);
             });
             initDragDrop();
 
+            // --- тело ---
             dayBody.innerHTML = '';
             DAYS.forEach((day, di) => {
                 const tr = document.createElement('tr');
                 let cells = `<td class="dayname">${day}</td>`;
                 students.forEach((s, si) => {
                     const val = (s.times && s.times[di]) ? s.times[di] : '';
-                    cells += `<td contenteditable="true" spellcheck="false" data-day="${di}" data-student="${si}">${val}</td>`;
+                    cells +=
+                        `<td contenteditable="true" spellcheck="false" data-day="${di}" data-student="${si}">${val}</td>`;
                 });
                 tr.innerHTML = cells;
                 dayBody.appendChild(tr);
             });
 
+            // --- подвал ---
             let priceRow = '<tr class="row-price"><td class="dayname">За занятие</td>';
             let countRow = '<tr class="row-count"><td class="dayname">Кол-во в неделю</td>';
             let sumRow = '<tr class="row-sum"><td class="dayname">Сумма в неделю</td>';
             students.forEach((s, i) => {
-                priceRow += `<td><input class="num-input-plain" type="number" min="0" step="50" data-field="price" data-i="${i}" value="${s.price || 0}"></td>`;
+                priceRow +=
+                    `<td><input class="num-input-plain" type="number" min="0" step="50" data-field="price" data-i="${i}" value="${s.price || 0}"></td>`;
                 countRow += `<td>${numberControlHtml('count', i, s.count || 0)}</td>`;
                 sumRow += `<td>${fmt((s.price || 0) * (s.count || 0))}</td>`;
             });
@@ -1198,16 +1604,22 @@
 
             attachHandlers();
             updateSummary();
-            // Если уже есть результат, пересчитать
+            renderCalendar(); // обновляем календарь
+
             if (document.getElementById('periodResult').textContent !== '—') {
                 calcPeriod();
             }
         }
 
+        // ================================================================
+        //  ОБРАБОТЧИКИ
+        // ================================================================
         function attachHandlers() {
+            // ячейки расписания
             dayBody.querySelectorAll('td[contenteditable]').forEach(td => {
                 td.addEventListener('blur', () => {
-                    const d = +td.dataset.day, s = +td.dataset.student;
+                    const d = +td.dataset.day,
+                        s = +td.dataset.student;
                     if (!students[s]) return;
                     if (!students[s].times) students[s].times = ['', '', '', '', '', '', ''];
                     students[s].times[d] = td.textContent.trim();
@@ -1215,6 +1627,7 @@
                 });
             });
 
+            // имена
             headRow.querySelectorAll('.stu-name').forEach(el => {
                 el.addEventListener('blur', () => {
                     const i = +el.dataset.i;
@@ -1224,6 +1637,7 @@
                 });
             });
 
+            // удаление
             headRow.querySelectorAll('.remove-col').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const i = +btn.dataset.i;
@@ -1236,6 +1650,7 @@
                 });
             });
 
+            // active
             headRow.querySelectorAll('.active-check').forEach(cb => {
                 cb.addEventListener('change', (e) => {
                     const i = +e.target.dataset.i;
@@ -1251,9 +1666,11 @@
                 });
             });
 
+            // цена
             footBody.querySelectorAll('.num-input-plain').forEach(inp => {
                 inp.addEventListener('input', () => {
-                    const i = +inp.dataset.i, field = inp.dataset.field;
+                    const i = +inp.dataset.i,
+                        field = inp.dataset.field;
                     if (!students[i]) return;
                     students[i][field] = parseFloat(inp.value) || 0;
                     updateSumRowOnly();
@@ -1262,9 +1679,11 @@
                 });
             });
 
+            // кол-во
             footBody.querySelectorAll('.number-control .num-input').forEach(inp => {
                 inp.addEventListener('input', () => {
-                    const i = +inp.dataset.i, field = inp.dataset.field;
+                    const i = +inp.dataset.i,
+                        field = inp.dataset.field;
                     if (!students[i]) return;
                     students[i][field] = parseFloat(inp.value) || 0;
                     updateSumRowOnly();
@@ -1273,6 +1692,7 @@
                 });
             });
 
+            // кнопки +/−
             footBody.querySelectorAll('.btn-up, .btn-down').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     const input = this.parentElement.querySelector('.num-input');
@@ -1305,6 +1725,9 @@
             document.getElementById('monthSum').textContent = fmt(weekSum * weeks);
         }
 
+        // ================================================================
+        //  ИНИЦИАЛИЗАЦИЯ
+        // ================================================================
         document.getElementById('addStudent').addEventListener('click', () => {
             students.push({ name: "Новый ученик", price: 1500, count: 1, times: ["", "", "", "", "", "", ""], active: true });
             render();
@@ -1334,17 +1757,21 @@
         }
         init();
 
-        // --- Часы и конвертер ---
+        // ================================================================
+        //  ЧАСЫ И КОНВЕРТЕР
+        // ================================================================
         (function() {
             const moscowEl = document.getElementById('moscowTime');
             const vladivostokEl = document.getElementById('vladivostokTime');
             const mskInput = document.getElementById('mskInput');
             const vlaInput = document.getElementById('vlaInput');
-            const MSK_OFFSET = 3, VLAT_OFFSET = 10;
+            const MSK_OFFSET = 3,
+                VLAT_OFFSET = 10;
 
             function formatTime(h, m, s) {
-                return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
             }
+
             function updateClocks() {
                 const now = Date.now();
                 const msk = new Date(now + MSK_OFFSET * 3600000);
@@ -1359,16 +1786,20 @@
                 if (!t) return null;
                 const p = t.split(':');
                 if (p.length !== 2) return null;
-                const h = parseInt(p[0]), m = parseInt(p[1]);
+                const h = parseInt(p[0]),
+                    m = parseInt(p[1]);
                 if (isNaN(h) || isNaN(m)) return null;
                 return h * 60 + m;
             }
+
             function minutesToTime(min) {
                 if (min === null || isNaN(min)) return '';
                 min = ((min % 1440) + 1440) % 1440;
-                return `${String(Math.floor(min/60)).padStart(2,'0')}:${String(Math.floor(min%60)).padStart(2,'0')}`;
+                return String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(Math.floor(min % 60)).padStart(2, '0');
             }
+
             function convertMskToVla(v) { return v === null ? null : (v + (VLAT_OFFSET - MSK_OFFSET) * 60) % 1440; }
+
             function convertVlaToMsk(v) { return v === null ? null : (v - (VLAT_OFFSET - MSK_OFFSET) * 60 + 1440) % 1440; }
 
             mskInput.addEventListener('input', function() {
@@ -1386,8 +1817,10 @@
                 const now = Date.now();
                 const msk = new Date(now + MSK_OFFSET * 3600000);
                 const vla = new Date(now + VLAT_OFFSET * 3600000);
-                mskInput.value = `${String(msk.getUTCHours()).padStart(2,'0')}:${String(msk.getUTCMinutes()).padStart(2,'0')}`;
-                vlaInput.value = `${String(vla.getUTCHours()).padStart(2,'0')}:${String(vla.getUTCMinutes()).padStart(2,'0')}`;
+                mskInput.value = String(msk.getUTCHours()).padStart(2, '0') + ':' + String(msk.getUTCMinutes()).padStart(2,
+                '0');
+                vlaInput.value = String(vla.getUTCHours()).padStart(2, '0') + ':' + String(vla.getUTCMinutes()).padStart(2,
+                '0');
             }
             setInitialTimes();
         })();
